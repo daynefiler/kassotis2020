@@ -1,0 +1,100 @@
+---
+title: "Data Download & Setup"
+author: "Dayne Filer"
+date: "6/2/2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(kassotis2020)
+library(data.table)
+dataDir <- "../inst/noBuild"
+```
+
+First, install the `kassotis2020` package from GitHub and download the data from the EPA FTP.
+
+```{r,eval=FALSE}
+devtools::install_github("daynefiler/kassotis2020")
+library(kassotis2020)
+library(data.table)
+dataDir <- getwd() ## location for the downloaded zip files
+downloadData()
+```
+
+Extract and compile the PhI data:
+
+```{r}
+ph1zip <- file.path(dataDir, "ToxCast_20110110.zip")
+ph1fls <- c("ACEA", "Attagene", "BioSeek", "Cellumen", 
+            "CellzDirect", "NCGC", "Novascreen")
+ph1fmt <- "ToxCast_Phase_1_%s_20110110.txt"
+ph1 <- lapply(sprintf(ph1fmt, ph1fls), freadZipFile, zipDir = ph1zip)
+procPh1 <- function(x) {
+  ## reformat CASRN to match phIII
+  x[ , CODE := paste0("C", gsub("-", "", CASRN))] 
+  x[ , c("GCID", "NAME", "CASRN") := NULL]
+  setkey(x, CODE)
+  x[]
+}
+ph1 <- Reduce(merge, lapply(ph1, procPh1))
+
+ph1rnm <- ph1$CODE
+## Make corrections for updated CASRN from Ph1 to Ph3
+ph1rnm[ph1rnm == "C85007"] <- "CNOCAS44337"
+ph1rnm[ph1rnm == "C51596113"] <- "CNOCAS34742"
+
+ph1data <- data.matrix(ph1[ , -1])
+rownames(ph1data) <- ph1rnm
+ph1data <- -log10(ph1data/1e6)
+```
+
+The resulting data matrix, `ph1data`, is conveniently stored in the `kassotis2020` package, and can be loaded into the environment using `data(ph1data)`.
+
+Extract and compile PhIII data:
+
+```{r}
+ph3zip <- file.path(dataDir, "INVITRODB_V3_2_SUMMARY.zip")
+chemData <- freadZipFile(ph3zip, "Chemical_Summary_190708.csv")
+ph3fmt <- "%s_Matrix_190708.csv"
+ph3fls <- c("modl_ga", "tested", "zscore", "hitc", "modl_tp")
+ph3 <- lapply(sprintf(ph3fmt, ph3fls), freadZipFile, zipDir = ph3zip, drop = 1)
+ph3 <- lapply(ph3, data.matrix)
+names(ph3) <- ph3fls
+
+## Transform the AC50 matrix
+ph3$modl_ga <- 10^ph3$modl_ga
+ph3$modl_ga[ph3$hitc == 0] <- 1e6
+ph3$modl_ga[is.na(ph3$modl_ga) & ph3$tested == 1] <- 1e6
+ph3$modl_ga <- -log10(ph3$modl_ga/1e6)
+
+## Transform the efficacy matrix
+ph3$modl_tp[ph3$hitc == 0] <- NA_real_
+ph3$modl_tp <- apply(ph3$modl_tp, 2, scale)
+colnames(ph3$modl_tp) <- paste0(colnames(ph3$modl_tp), "_emax")
+
+## Transform the z-score matrix
+ph3$zscore[ph3$zscore < 0] <- 0
+ph3$zscore[ph3$hitc != 1] <- 0
+ph3$zscore[is.na(ph3$zscore)] <- 0
+
+ph3data <- cbind(ph3$modl_ga, ph3$modl_tp)
+ph3zscr <- ph3$zscore
+
+ph3rnm <- freadZipFile(ph3zip, sprintf(ph3fmt, ph3fls[1]), select = 1)[[1]]
+rownames(ph3data) <- ph3rnm
+rownames(ph3zscr) <- ph3rnm
+```
+
+Similarly, `ph3data`, `ph3zscr`, and `chemData` are available as data objects within the `kassotis2020` package.
+
+```{r,eval=FALSE,echo=FALSE}
+save(ph1data, file = "../data/ph1data.RData")
+save(ph3data, file = "../data/ph3data.RData")
+save(ph3zscr, file = "../data/ph3zscr.RData")
+save(chemData, file = "../data/chemData.RData")
+```
+
+
+
+
