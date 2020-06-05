@@ -1,10 +1,12 @@
 ---
 title: "Models & Results"
-author: "Dayne Filer"
-date: "6/2/2020"
-output:
-  html_document:
-    df_print: paged
+author: "Dayne Filer & Chris Kassotis"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{ModelsAndResults}
+  %\VignetteEngine{knitr::rmarkdown}
+  \usepackage[utf8]{inputenc}
 ---
 
 ```{r setup, include=FALSE}

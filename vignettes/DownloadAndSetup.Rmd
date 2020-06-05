@@ -1,8 +1,12 @@
 ---
 title: "Data Download & Setup"
-author: "Dayne Filer"
-date: "6/2/2020"
-output: html_document
+author: "Dayne Filer & Chris Kassotis"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{DownloadAndSetup}
+  %\VignetteEngine{knitr::rmarkdown}
+  \usepackage[utf8]{inputenc}
 ---
 
 ```{r setup, include=FALSE}
