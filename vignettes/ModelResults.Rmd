@@ -1,0 +1,67 @@
+---
+title: "Model Results"
+author: "Dayne Filer & Chris Kassotis"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{ModelResults}
+  %\VignetteEngine{knitr::rmarkdown}
+  \usepackage[utf8]{inputenc}
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+Load packages & needed data:
+
+```{r,warning=FALSE,message=FALSE,results='hide'}
+library(kassotis2020)
+library(data.table)
+data(smryTbl)
+```
+
+```{r, fig.width=9, fig.height=6, dev.args=list(pointsize=10), out.width = '70%', fig.align='center'}
+metricPlot("BalancedAccuracy")
+```
+
+```{r, fig.width=9, fig.height=6, dev.args=list(pointsize=10), out.width = '70%', fig.align='center'}
+metricPlot("Sensitivity")
+```
+
+```{r, fig.width=9, fig.height=6, dev.args=list(pointsize=10), out.width = '70%', fig.align='center'}
+metricPlot("Specificity")
+```
+
+```{r, fig.width=9, fig.height=6, dev.args=list(pointsize=10), out.width = '70%', fig.align='center'}
+smryTbl[ , SensPlusSpec :=  Sensitivity + Specificity]
+metricPlot("SensPlusSpec", loadSmryTbl = FALSE)
+```
+
+```{r, fig.width=9, fig.height=6, dev.args=list(pointsize=10), out.width = '70%', fig.align='center'}
+metricPlot("PosPredValue")
+```
+
+```{r, fig.width=9, fig.height=6, dev.args=list(pointsize=10), out.width = '70%', fig.align='center'}
+metricPlot("NegPredValue")
+```
+
+```{r, fig.width=9, fig.height=6, dev.args=list(pointsize=10), out.width = '70%', fig.align='center'}
+metricPlot("Precision")
+```
+
+```{r, fig.width=9, fig.height=6, dev.args=list(pointsize=10), out.width = '70%', fig.align='center'}
+metricPlot("Recall")
+```
+
+```{r, fig.width=9, fig.height=6, dev.args=list(pointsize=10), out.width = '70%', fig.align='center'}
+metricPlot("PRC")
+```
+
+```{r, fig.width=9, fig.height=6, dev.args=list(pointsize=10), out.width = '70%', fig.align='center'}
+metricPlot("ROC")
+```
+
+
+
+

@@ -1,0 +1,197 @@
+---
+title: "Create Models"
+author: "Dayne Filer & Chris Kassotis"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{CreateModels}
+  %\VignetteEngine{knitr::rmarkdown}
+  \usepackage[utf8]{inputenc}
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+Load packages & needed data:
+
+```{r,warning=FALSE,message=FALSE,results='hide'}
+library(kassotis2020)
+library(data.table)
+data(ph1data)
+data(ph3data)
+data(ph3zscr)
+data(chemData)
+data(controls)
+data(janesick)
+```
+
+
+```{r}
+## PhI assays
+ph1 <- c("ATG_PPRE_CIS",                   "ATG_PPARg_TRANS",     
+         "NVS_NR_hPPARg",                  "NCGC_PPARg_Agonist",    
+         "NCGC_GR_Agonist",                "NVS_NR_hGR", 
+         "ATG_GR_TRANS",                   "ATG_GRE_CIS",         
+         "ATG_LXRa_TRANS",                 "ATG_LXRb_TRANS",        
+         "NCGC_LXR_Agonist",               "ATG_DR4_LXR_CIS", 
+         "ATG_C_EBP_CIS",                  "ATG_SREBP_CIS",       
+         "ATG_RXRa_TRANS",                 "NCGC_RXRa_Agonist")
+
+## PhIII assays
+ph3 <- c("ATG_PPRE_CIS_up",                "ATG_PPARg_TRANS_up",  
+         "TOX21_PPARg_BLA_Agonist_ratio",  "NVS_NR_hPPARg",          
+         "OT_PPARg_PPARgSRC1_0480",        "OT_PPARg_PPARgSRC1_1440", 
+         "ATG_PPARa_TRANS_up",             "NVS_NR_hPPARa",
+         "ATG_PPARd_TRANS_up",             "TOX21_PPARd_BLA_agonist_ratio",
+         "TOX21_GR_BLA_Agonist_ratio",     "NVS_NR_hGR", 
+         "ATG_GR_TRANS_up",                "ATG_GRE_CIS_up",
+         "ATG_LXRa_TRANS_up",              "ATG_LXRb_TRANS_up",
+         "ATG_DR4_LXR_CIS_up",             "ATG_C_EBP_CIS_up", 
+         "ATG_SREBP_CIS_up",               "ATG_RXRa_TRANS_up",
+         "TOX21_RXR_BLA_Agonist_ratio",    "OT_NURR1_NURR1RXRa_0480",
+         "OT_NURR1_NURR1RXRa_1440",        "ATG_RXRb_TRANS_up",
+         "ATG_RXRg_TRANS2_up",             "ATG_PXRE_CIS_up",
+         "ATG_PXR_TRANS_up",               "NVS_NR_hPXR",
+         "ACEA_AR_antagonist_80hr",        "ATG_AR_TRANS_up",
+         "NVS_NR_cAR",                     "NVS_NR_hAR", 
+         "NVS_NR_rAR",                     "OT_AR_ARELUC_AG_1440",
+         "OT_AR_ARSRC1_0480",              "OT_AR_ARSRC1_0960", 
+         "TOX21_AR_BLA_Antagonist_ratio", 
+         "TOX21_AR_LUC_MDAKB2_Antagonist_10nM_R1881",
+         "ATG_CAR_TRANS_up",               "NVS_NR_hCAR_Agonist",
+         "TOX21_CAR_Agonist",              "ATG_FXR_TRANS_up",
+         "ATG_IR1_CIS_up",                 "NVS_NR_hFXR_Agonist", 
+         "OT_FXR_FXRSRC1_0480",            "OT_FXR_FXRSRC1_1440",
+         "TOX21_FXR_BLA_agonist_ratio",    "ATG_THRa1_TRANS_up",
+         "ATG_THRb_TRANS2_up",             "NVS_NR_hTRa_Antagonist",
+         "TOX21_TR_LUC_GH3_Antagonist",    "ATG_DR5_CIS_up",
+         "ATG_RARa_TRANS_up",              "NVS_NR_hRARa_Agonist",
+         "TOX21_RAR_LUC_Agonist",          "ATG_RARb_TRANS_up",
+         "ATG_RARg_TRANS_up",              "BSK_CASM3C_LDLR_up",
+         "NVS_ENZ_hIGF1R",                 "NVS_ENZ_hIGF1R_Activator", 
+         "NVS_ENZ_hInsR",                  "NVS_ENZ_hInsR_Activator")
+
+## 8-slice model used in Janesick et al. w/ phI assays
+ja1 <- list(slices = list(PPRE  = ph1[1],         PPARg = ph1[2:4], 
+                          GR    = ph1[5:8],       LXR   = ph1[9:11], 
+                          LXRE  = ph1[12],        CEBP  = ph1[13],
+                          SREBP = ph1[14],        RXRa  = ph1[15:16]), 
+            weights = c(1, 1, 1, 1, 1, 1, 1, 1))
+
+## 8-slice model used in Janesick et al. w/ phIII assays
+ja3 <- list(slices = list(PPRE  = ph3[1],         PPARg = ph3[2:4], 
+                          GR    = ph3[11:14],     LXR   = ph3[15:16], 
+                          LXRE  = ph3[17],        CEBP  = ph3[18],
+                          SREBP = ph3[19],        RXRa  = ph3[20:21]), 
+            weights = c(1, 1, 1, 1, 1, 1, 1, 1))
+
+## 5-slice model used in Auerbach et al. w/ phIII assays
+au3 <- list(slices = list(PPARg = ph3[c(1:4, 6)], GR    = ph3[11:14], 
+                          LXR   = ph3[15:17],     Other = ph3[18:19], 
+                          RXRa  = ph3[20L]),
+            weights = c(1, 1, 1, 1, 1))
+```
+
+We can then calculate the ToxPi scores and look at prediction metrics.
+
+```{r}
+## setup for z-score filtering/adding
+filtAdd <- function(coff) {
+  tmp <- cbind(ph3zscr, ph3zscr)
+  replace(ph3data, tmp < coff, 0) + replace(tmp, tmp < coff, 0)
+}
+
+## Caculate ToxPi models for the Janesick model
+ja1Non <- calculateToxpi(ph1data,    ja1)
+ja3Non <- calculateToxpi(ph3data,    ja3)
+ja3AdZ <- calculateToxpi(filtAdd(0), ja3)
+ja3Rm1 <- calculateToxpi(filtAdd(1), ja3)
+ja3Rm2 <- calculateToxpi(filtAdd(2), ja3)
+ja3Rm3 <- calculateToxpi(filtAdd(3), ja3)
+
+## Calculate ToxPi models for the Auerbach model
+au3Non <- calculateToxpi(ph3data, au3)
+au3AdZ <- calculateToxpi(filtAdd(0), au3)
+au3Rm1 <- calculateToxpi(filtAdd(1), au3)
+au3Rm2 <- calculateToxpi(filtAdd(2), au3)
+au3Rm3 <- calculateToxpi(filtAdd(3), au3)
+```
+
+```{r}
+smry <- list(## Baseline comparison of Kassotis 3T3 to lit review
+             with(controls[!(noLit)], evalPred(cellActive, litActive)),
+             ## 8-slice model using Janesick 3T3 results
+             evalPred(ja1Non[janesick$code, "Score"], janesick$cellActive),
+             evalPred(ja3Non[janesick$code, "Score"], janesick$cellActive),
+             evalPred(ja3AdZ[janesick$code, "Score"], janesick$cellActive),
+             evalPred(ja3Rm1[janesick$code, "Score"], janesick$cellActive),
+             evalPred(ja3Rm2[janesick$code, "Score"], janesick$cellActive),
+             evalPred(ja3Rm3[janesick$code, "Score"], janesick$cellActive),
+             ## 8-slice model using Kassotis 3T3 results
+             evalPred(ja3Non[controls$code, "Score"], controls$cellActive),
+             evalPred(ja3AdZ[controls$code, "Score"], controls$cellActive),
+             evalPred(ja3Rm1[controls$code, "Score"], controls$cellActive),
+             evalPred(ja3Rm2[controls$code, "Score"], controls$cellActive),
+             evalPred(ja3Rm3[controls$code, "Score"], controls$cellActive),
+             ## 8-slice model using Kassotis literature results
+             evalPred(ja3Non[controls$code, "Score"], controls$litActive),
+             evalPred(ja3AdZ[controls$code, "Score"], controls$litActive),
+             evalPred(ja3Rm1[controls$code, "Score"], controls$litActive),
+             evalPred(ja3Rm2[controls$code, "Score"], controls$litActive),
+             evalPred(ja3Rm3[controls$code, "Score"], controls$litActive),
+             ## 5-slice model using Janesick 3T3 results
+             evalPred(au3Non[janesick$code, "Score"], janesick$cellActive),
+             evalPred(au3AdZ[janesick$code, "Score"], janesick$cellActive),
+             evalPred(au3Rm1[janesick$code, "Score"], janesick$cellActive),
+             evalPred(au3Rm2[janesick$code, "Score"], janesick$cellActive),
+             evalPred(au3Rm3[janesick$code, "Score"], janesick$cellActive),
+             ## 5-slice model using Kassotis 3T3 results
+             evalPred(au3Non[controls$code, "Score"], controls$cellActive),
+             evalPred(au3AdZ[controls$code, "Score"], controls$cellActive),
+             evalPred(au3Rm1[controls$code, "Score"], controls$cellActive),
+             evalPred(au3Rm2[controls$code, "Score"], controls$cellActive),
+             evalPred(au3Rm3[controls$code, "Score"], controls$cellActive),
+             ## 5-slice model using Kassotis lit results
+             evalPred(au3Non[controls$code, "Score"], controls$litActive),
+             evalPred(au3AdZ[controls$code, "Score"], controls$litActive),
+             evalPred(au3Rm1[controls$code, "Score"], controls$litActive),
+             evalPred(au3Rm2[controls$code, "Score"], controls$litActive),
+             evalPred(au3Rm3[controls$code, "Score"], controls$litActive))
+smryTbl <- as.data.table(t(sapply(smry, '[[', "metrics")))
+mdlFac <- factor(c("8-Slice", "5-Slice"), levels = c("8-Slice", "5-Slice"))
+smryTbl[ , Model := mdlFac[c(NA, rep(1, 16), rep(2, 15))]]
+phFac <- factor(c("PhI", "PhIII"), levels = c("PhI", "PhIII"))
+smryTbl[ , Phase := phFac[c(NA, 1, rep(2, 30))]]
+csFac <- factor(c("Janesick", "Kassotis"), levels = c("Janesick", "Kassotis"))
+smryTbl[ , CtrlSet := csFac[c(NA, 1, rep(c(rep(1, 5), rep(2, 10)), 2))]]
+ctFac <- factor(c("Cell", "Literature"), levels = c("Cell", "Literature"))
+smryTbl[ , CtrlType := ctFac[c(NA, 1, rep(c(rep(1, 10), rep(2, 5)), 2))]]
+zsFac <- factor(c("None", ">0", ">1", ">2", ">3"), 
+                levels = c("None", ">0", ">1", ">2", ">3"))
+smryTbl[ , ZScore := zsFac[c(NA, 1, rep(1:5, 6))]]
+setcolorder(smryTbl, c("Model", "Phase", "CtrlSet", "CtrlType", "ZScore"))
+smryTbl
+```
+
+```{r,eval=FALSE,echo=FALSE}
+save(smryTbl, file = "../data/smryTbl.RData")
+```
+
+
+
+```{r,eval=FALSE,include=FALSE}
+addEmax <- function(mdl) {
+  e <- lapply(mdl$slices, paste0, "_emax")
+  names(e) <- paste0("e", names(mdl$slices))
+  mdl$slices <- c(mdl$slices, e)
+  mdl$weights <- c(mdl$weights, mdl$weights)
+  mdl
+}
+tst <- calculateToxpi(ph3data, addEmax(au3))
+evalPred(tst[controls$code, "Score"], controls$litActive)$metrics
+```
+
+
+
+

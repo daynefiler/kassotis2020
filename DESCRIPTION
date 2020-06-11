@@ -3,14 +3,14 @@ Type: Package
 Title: Analysis for 'Building a Predictive Model with ToxCast Data to 
   Evaluate Potential Metabolic Disruption by Environmental Chemicals'
 Version: 1.0
-Author: 
+Authors@R: 
   c(person("Dayne L", "Filer", 
-           role = "aut", 
+           role = c("aut", "cre"), 
            email = "dayne.filer@gmail.com",
            comment = c(ORCID = "0000-0002-3443-5315")),
     person("Christopher D", "Kassotis",
            role = "aut",
-           email = "christopher.kassotis@duke.edu"
+           email = "christopher.kassotis@duke.edu",
            comment = c(ORCID = "0000-0002-0990-2428")))
 Maintainer: Dayne Filer <dayne.filer@gmail.com>
 Description: This package exists as a distributable and reproducible record
