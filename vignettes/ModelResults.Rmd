@@ -3,8 +3,8 @@ title: "Model Results"
 author: "Dayne Filer & Chris Kassotis"
 date: "`r Sys.Date()`"
 output: 
-  rmarkdown::html_vignette: default
   pdf_document: default
+  rmarkdown::html_vignette: default
 vignette: >
   %\VignetteIndexEntry{ModelResults}
   %\VignetteEngine{knitr::rmarkdown}

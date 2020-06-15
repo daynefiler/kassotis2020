@@ -3,8 +3,8 @@ title: "Create Models"
 author: "Dayne Filer & Chris Kassotis"
 date: "`r Sys.Date()`"
 output: 
-  rmarkdown::html_vignette: default
   pdf_document: default
+  rmarkdown::html_vignette: default
 vignette: >
   %\VignetteIndexEntry{CreateModels}
   %\VignetteEngine{knitr::rmarkdown}
@@ -24,7 +24,7 @@ data(ph1data)
 data(ph3data)
 data(ph3zscr)
 data(chemData)
-data(controls)
+data(kassotis)
 data(janesick)
 ```
 
@@ -122,7 +122,7 @@ au3Rm3 <- calculateToxpi(filtAdd(3), au3)
 
 ```{r}
 smry <- list(## Baseline comparison of Kassotis 3T3 to lit review
-             with(controls[!(noLit)], evalPred(cellActive, litActive)),
+             with(kassotis, evalPred(cellActive, litActive)),
              ## 8-slice model using Janesick 3T3 results
              evalPred(ja1Non[janesick$code, "Score"], janesick$cellActive),
              evalPred(ja3Non[janesick$code, "Score"], janesick$cellActive),
@@ -131,17 +131,17 @@ smry <- list(## Baseline comparison of Kassotis 3T3 to lit review
              evalPred(ja3Rm2[janesick$code, "Score"], janesick$cellActive),
              evalPred(ja3Rm3[janesick$code, "Score"], janesick$cellActive),
              ## 8-slice model using Kassotis 3T3 results
-             evalPred(ja3Non[controls$code, "Score"], controls$cellActive),
-             evalPred(ja3AdZ[controls$code, "Score"], controls$cellActive),
-             evalPred(ja3Rm1[controls$code, "Score"], controls$cellActive),
-             evalPred(ja3Rm2[controls$code, "Score"], controls$cellActive),
-             evalPred(ja3Rm3[controls$code, "Score"], controls$cellActive),
+             evalPred(ja3Non[kassotis$code, "Score"], kassotis$cellActive),
+             evalPred(ja3AdZ[kassotis$code, "Score"], kassotis$cellActive),
+             evalPred(ja3Rm1[kassotis$code, "Score"], kassotis$cellActive),
+             evalPred(ja3Rm2[kassotis$code, "Score"], kassotis$cellActive),
+             evalPred(ja3Rm3[kassotis$code, "Score"], kassotis$cellActive),
              ## 8-slice model using Kassotis literature results
-             evalPred(ja3Non[controls$code, "Score"], controls$litActive),
-             evalPred(ja3AdZ[controls$code, "Score"], controls$litActive),
-             evalPred(ja3Rm1[controls$code, "Score"], controls$litActive),
-             evalPred(ja3Rm2[controls$code, "Score"], controls$litActive),
-             evalPred(ja3Rm3[controls$code, "Score"], controls$litActive),
+             evalPred(ja3Non[kassotis$code, "Score"], kassotis$litActive),
+             evalPred(ja3AdZ[kassotis$code, "Score"], kassotis$litActive),
+             evalPred(ja3Rm1[kassotis$code, "Score"], kassotis$litActive),
+             evalPred(ja3Rm2[kassotis$code, "Score"], kassotis$litActive),
+             evalPred(ja3Rm3[kassotis$code, "Score"], kassotis$litActive),
              ## 5-slice model using Janesick 3T3 results
              evalPred(au3Non[janesick$code, "Score"], janesick$cellActive),
              evalPred(au3AdZ[janesick$code, "Score"], janesick$cellActive),
@@ -149,17 +149,17 @@ smry <- list(## Baseline comparison of Kassotis 3T3 to lit review
              evalPred(au3Rm2[janesick$code, "Score"], janesick$cellActive),
              evalPred(au3Rm3[janesick$code, "Score"], janesick$cellActive),
              ## 5-slice model using Kassotis 3T3 results
-             evalPred(au3Non[controls$code, "Score"], controls$cellActive),
-             evalPred(au3AdZ[controls$code, "Score"], controls$cellActive),
-             evalPred(au3Rm1[controls$code, "Score"], controls$cellActive),
-             evalPred(au3Rm2[controls$code, "Score"], controls$cellActive),
-             evalPred(au3Rm3[controls$code, "Score"], controls$cellActive),
+             evalPred(au3Non[kassotis$code, "Score"], kassotis$cellActive),
+             evalPred(au3AdZ[kassotis$code, "Score"], kassotis$cellActive),
+             evalPred(au3Rm1[kassotis$code, "Score"], kassotis$cellActive),
+             evalPred(au3Rm2[kassotis$code, "Score"], kassotis$cellActive),
+             evalPred(au3Rm3[kassotis$code, "Score"], kassotis$cellActive),
              ## 5-slice model using Kassotis lit results
-             evalPred(au3Non[controls$code, "Score"], controls$litActive),
-             evalPred(au3AdZ[controls$code, "Score"], controls$litActive),
-             evalPred(au3Rm1[controls$code, "Score"], controls$litActive),
-             evalPred(au3Rm2[controls$code, "Score"], controls$litActive),
-             evalPred(au3Rm3[controls$code, "Score"], controls$litActive))
+             evalPred(au3Non[kassotis$code, "Score"], kassotis$litActive),
+             evalPred(au3AdZ[kassotis$code, "Score"], kassotis$litActive),
+             evalPred(au3Rm1[kassotis$code, "Score"], kassotis$litActive),
+             evalPred(au3Rm2[kassotis$code, "Score"], kassotis$litActive),
+             evalPred(au3Rm3[kassotis$code, "Score"], kassotis$litActive))
 smryTbl <- as.data.table(t(sapply(smry, '[[', "metrics")))
 mdlFac <- factor(c("8-Slice", "5-Slice"), levels = c("8-Slice", "5-Slice"))
 smryTbl[ , Model := mdlFac[c(NA, rep(1, 16), rep(2, 15))]]
@@ -181,19 +181,6 @@ smryTbl
 save(smryTbl, file = "../data/smryTbl.RData")
 ```
 
-
-
-```{r,eval=FALSE,include=FALSE}
-addEmax <- function(mdl) {
-  e <- lapply(mdl$slices, paste0, "_emax")
-  names(e) <- paste0("e", names(mdl$slices))
-  mdl$slices <- c(mdl$slices, e)
-  mdl$weights <- c(mdl$weights, mdl$weights)
-  mdl
-}
-tst <- calculateToxpi(ph3data, addEmax(au3))
-evalPred(tst[controls$code, "Score"], controls$litActive)$metrics
-```
 
 
 
