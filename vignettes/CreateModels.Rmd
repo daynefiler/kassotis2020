@@ -2,7 +2,9 @@
 title: "Create Models"
 author: "Dayne Filer & Chris Kassotis"
 date: "`r Sys.Date()`"
-output: rmarkdown::html_vignette
+output: 
+  rmarkdown::html_vignette: default
+  pdf_document: default
 vignette: >
   %\VignetteIndexEntry{CreateModels}
   %\VignetteEngine{knitr::rmarkdown}
@@ -171,6 +173,7 @@ zsFac <- factor(c("None", ">0", ">1", ">2", ">3"),
                 levels = c("None", ">0", ">1", ">2", ">3"))
 smryTbl[ , ZScore := zsFac[c(NA, 1, rep(1:5, 6))]]
 setcolorder(smryTbl, c("Model", "Phase", "CtrlSet", "CtrlType", "ZScore"))
+smryTbl[ , SensPlusSpec :=  Sensitivity + Specificity]
 smryTbl
 ```
 

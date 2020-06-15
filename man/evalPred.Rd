@@ -14,3 +14,6 @@ evalPred(x, y)
 \description{
 Calculate prediction metrics for the given prediction
 }
+\details{
+x and y are subset to complete (neither NA) cases
+}

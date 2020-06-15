@@ -2,7 +2,9 @@
 title: "Data Download & Setup"
 author: "Dayne Filer & Chris Kassotis"
 date: "`r Sys.Date()`"
-output: rmarkdown::html_vignette
+output: 
+  rmarkdown::html_vignette: default
+  pdf_document: default
 vignette: >
   %\VignetteIndexEntry{DownloadAndSetup}
   %\VignetteEngine{knitr::rmarkdown}

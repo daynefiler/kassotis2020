@@ -4,7 +4,7 @@
 \alias{rankPlot}
 \title{Create ToxPi score rank plots}
 \usage{
-rankPlot(res, posChems = NULL, negChems = NULL)
+rankPlot(res, posChems = NULL, negChems = NULL, coff = NULL)
 }
 \arguments{
 \item{res}{res matrix from \link{computeToxpi}}
@@ -12,6 +12,8 @@ rankPlot(res, posChems = NULL, negChems = NULL)
 \item{posChems}{vector of codes to color "active" chemcials orange}
 
 \item{negChems}{vector of codes to color "negative" chemicals purple}
+
+\item{coff}{numeric value, the score cutoff for positive vs negative}
 }
 \description{
 Create ToxPi score rank plots

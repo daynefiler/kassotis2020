@@ -25,7 +25,7 @@ calculateToxpi <- function(dat, mdl) {
   slc <- sapply(mdl$slices, sumSlice)
   slc <- apply(slc, 2, z2o)
   Score <- rowSums(sweep(slc, 2, wts, "*"))
-  Rank  <- rank(Score, ties.method = "random")
+  Rank  <- rank(Score, ties.method = "first")
   cbind(Score, Rank, slc)
 
 }
