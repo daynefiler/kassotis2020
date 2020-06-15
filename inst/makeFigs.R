@@ -26,8 +26,8 @@ coff <- smryTbl[Model == "5-Slice" &
                   ZScore == "None",
                 cutpoint]
 rankPlot(allScores[["au3Non"]],
-         kassotis[(cellActive), code],
-         kassotis[!(cellActive), code],
+         kassotis[(litActive), code],
+         kassotis[!(litActive), code],
          coff)
 addfiglab("B")
 dev.off()
