@@ -8,8 +8,8 @@
 #' @export
 
 downloadData <- function(destDir = getwd()) {
-  baseUrl <- file.path("ftp://newftp.epa.gov",
-                       "Computational_Toxicology_Data",
+  baseUrl <- file.path("https://gaftp.epa.gov",
+                       "Comptox",
                        "High_Throughput_Screening_Data")
   ph1 <- file.path(baseUrl,
                    "Previous_Data",
