@@ -7,3 +7,4 @@ inst/noBuild
 ^docs$
 ^pkgdown$
 ^\.github$
+^LICENSE\.md$
