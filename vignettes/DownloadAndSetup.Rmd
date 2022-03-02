@@ -30,7 +30,7 @@ downloadData(destDir = dataDir)
 
 Extract and compile the PhI data:
 
-```{r}
+```{r,eval=FALSE}
 ph1zip <- file.path(dataDir, "ToxCast_20110110.zip")
 ph1fls <- c("ACEA", "Attagene", "BioSeek", "Cellumen", 
             "CellzDirect", "NCGC", "Novascreen")
@@ -59,7 +59,7 @@ The resulting data matrix, `ph1data`, is conveniently stored in the `kassotis202
 
 Extract and compile PhIII data:
 
-```{r}
+```{r,eval=FALSE}
 ph3zip <- file.path(dataDir, "INVITRODB_V3_2_SUMMARY.zip")
 chemData <- freadZipFile(ph3zip, "Chemical_Summary_190708.csv")
 ph3fmt <- "%s_Matrix_190708.csv"
