@@ -1,0 +1,12 @@
+pandoc: 2.7.3
+pkgdown: 2.0.2
+pkgdown_sha: ~
+articles:
+  CreateModels: CreateModels.html
+  DownloadAndSetup: DownloadAndSetup.html
+  ModelResults: ModelResults.html
+last_built: 2022-03-02T16:04Z
+urls:
+  reference: http://daynefiler.com/kassotis2020/reference
+  article: http://daynefiler.com/kassotis2020/articles
+
