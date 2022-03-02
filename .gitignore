@@ -43,3 +43,4 @@ vignettes/*.tex
 inst/noBuild
 doc
 Meta
+docs
