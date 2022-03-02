@@ -25,7 +25,7 @@ devtools::install_github("daynefiler/kassotis2020")
 library(kassotis2020)
 library(data.table)
 dataDir <- getwd() ## location for the downloaded zip files
-downloadData()
+downloadData(destDir = dataDir)
 ```
 
 Extract and compile the PhI data:
